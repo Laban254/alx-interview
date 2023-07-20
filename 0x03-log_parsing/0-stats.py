@@ -1,38 +1,35 @@
 #!/usr/bin/python3
-"""This module contains the solution for the log parsing problem"""
-from sys import stdin
+"""log parsing"""
+import sys
 
 
-def print_status_codes(code, file_size):
-    """Prints the status code with its count.
-    Format:
-        <status>: <count>
-    """
-    print("File size: {}".format(file_size))
-    for key, val in code.items():
-        print("{}: {}".format(key, val))
+def print_data(total_file_size, status_code_data):
+    """prints total size and status code count"""
+    print('File size: {}'.format(total_file_size))
+    for k, v in sorted(status_code_data.items()):
+        if v != 0:
+            print('{}: {}'.format(k, v))
 
 
-code = {}
-file_size = 0
-vals_total = 0
-
+status_codes = ['200', '301', '400', '401', '403', '404', '405', '500']
+status_code_data = {code: 0 for code in status_codes}
+total_file_size = 0
 try:
-    for line in stdin:
-        line = line.split()
-        file_size += int(line[-1])
-        status = line[-2]
-        vals = list(code.values())
-        vals_total = sum(vals)
-
-        if status not in code:
-            code[status] = 1
-        else:
-            code[status] += 1
-
-        vals_total += 1
-
-        if vals_total % 10 == 0:
-            print_status_codes(code, file_size)
+    count = 0
+    for line in sys.stdin:
+        splitstr = line.split()
+        try:
+            total_file_size += int(splitstr[-1])
+            code = splitstr[-2]
+            if code in status_code_data:
+                count += 1
+                status_code_data[code] += 1
+                if count % 10 == 0:
+                    print_data(total_file_size, status_code_data)
+        except:
+            pass
 except KeyboardInterrupt:
-    print_status_codes(code, file_size)
+    print_data(total_file_size, status_code_data)
+    raise
+else:
+    print_data(total_file_size, status_code_data)
